@@ -55,5 +55,101 @@ ReactDOM.render(
 
 React DOM 在渲染所有输入内容之前，默认会进行[转义](https://stackoverflow.com/questions/7381974/which-characters-need-to-be-escaped-on-html)。它可以确保在你的应用中，永远不会注入那些并非自己明确编写的内容。所有的内容在渲染之前都被转换成了字符串。这样可以有效地防止 [XSS（cross-site-scripting, 跨站脚本）](https://en.wikipedia.org/wiki/Cross-site_scripting)攻击。
 
-### 
+## JSX表示对象
 
+> babel会把JSX转换成一个名为`React.createElement()`函数调用
+
+- 以下两种代码完全等效
+
+  ```js
+  const element = (
+    <h1 className="greeting">
+      Hello, world!
+    </h1>
+  );
+  ```
+
+  ```js
+  const element = React.createElement(
+    'h1',
+    {className: 'greeting'},
+    'Hello, world!'
+  );
+  ```
+
+- 函数执行完创建了这样一个对象
+
+  ```js
+  // 注意：这是简化过的结构
+  const element = {
+    type: 'h1',
+    props: {
+      className: 'greeting',
+      children: 'Hello, world!'
+    }
+  };
+  ```
+
+  > 这些对象是`react`元素，`react`读取这些对象，并用他们来构建`dom`并随时保持更新
+
+- 实现`React.createElement`函数
+
+  ```js
+  const element = myCreate('div', {className: 'test01', id: 'jjj'}, '示例1', myCreate('button', {onclick: () => {
+          console.log(111)}, id: 'btn'}, '点击我'));
+  
+  function createText(type) {
+      return {
+          type: 'text',
+          props: {
+              nodeValue: type,
+              children: []
+          }
+      }
+  }
+  
+  function myCreate (domName, domProperty, ...children) {
+      // 讲参数转为对象
+      return {
+          type: domName,
+          props: {
+              ...domProperty,
+              children: children.map(item => typeof item === 'object' ? item : createText(item))
+          }
+      }
+  }
+  ```
+
+- 实现`reactDom.render`方法
+
+  ```js
+  function createDom(dom) {
+      // 解析虚拟dom
+      // 创建dom节点
+      const parentDom = document.createElement(dom.type);
+      for (const parentDomKey in dom.props) {
+          if (parentDomKey !== 'children') {
+              parentDom[parentDomKey] = dom.props[parentDomKey];
+          }else{
+              const childs = dom.props.children;
+              for (let i = 0; i < childs.length; i++) {
+                  // 子节点是文本节点
+                  if (childs[i].type === 'text') {
+                      const text = document.createTextNode(childs[i].props.nodeValue);
+                      parentDom.appendChild(text);
+                  }else{ // 子节点是dom节点
+                      parentDom.appendChild(createDom(childs[i]));
+                  }
+              }
+          }
+      }
+      return parentDom;
+  }
+  
+  function myRender(dom, container) {
+      const result = createDom(dom);
+      container.appendChild(result);
+  }
+  
+  myRender(element, document.querySelector("#app"));
+  ```

@@ -1,0 +1,39 @@
+
+class Clock extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            date: new Date()
+        }
+    }
+
+    // 组件加载之后
+    componentDidMount() {
+        this.time = setInterval(() => this.tick(), 1000);
+    }
+
+    // 组件加载之前
+    componentWillUnmount() {
+        clearInterval(this.time)
+    }
+
+    tick() {
+        this.setState({
+            date: new Date()
+        })
+    }
+
+    render() {
+        return (
+            <div>
+                <h1>Hello World</h1>
+                <h2>It is {this.state.date.toLocaleTimeString()}</h2>
+            </div>
+        )
+    }
+}
+
+ReactDOM.render(
+    <Clock />,
+    document.getElementById('app')
+)

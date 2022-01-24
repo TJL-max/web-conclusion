@@ -6,94 +6,54 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Clock = function (_React$Component) {
-    _inherits(Clock, _React$Component);
+var Count = function (_React$Component) {
+    _inherits(Count, _React$Component);
 
-    function Clock(props) {
-        _classCallCheck(this, Clock);
+    function Count(props) {
+        _classCallCheck(this, Count);
 
-        var _this = _possibleConstructorReturn(this, (Clock.__proto__ || Object.getPrototypeOf(Clock)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Count.__proto__ || Object.getPrototypeOf(Count)).call(this, props));
 
         _this.state = {
-            date: new Date(),
-            times: 0
+            count: 1
         };
         return _this;
     }
 
-    // 组件加载之后
-
-
-    _createClass(Clock, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var _this2 = this;
-
-            this.time = setInterval(function () {
-                return _this2.tick();
-            }, 1000);
-        }
-
-        // 组件加载之前
-
-    }, {
-        key: 'componentWillUnmount',
-        value: function componentWillUnmount() {
-            clearInterval(this.time);
-        }
-    }, {
-        key: 'tick',
-        value: function tick() {
-            this.setState({
-                date: new Date()
-            });
-        }
-    }, {
-        key: 'addOne',
-        value: function addOne() {
-            var _this3 = this;
-
-            // this.setState({times: this.state.times+1});
+    _createClass(Count, [{
+        key: 'add',
+        value: function add() {
+            // this.setState({
+            //     count: this.state.count + this.props.num
+            // })
             this.setState(function (state, props) {
                 return {
-                    times: state.times + 1
+                    count: state.count + props.num
                 };
-            }, function () {
-                console.log(_this3.state.times);
             });
-            console.log(this.state.times);
+            console.log(this.state.count);
         }
     }, {
         key: 'render',
         value: function render() {
-            var _this4 = this;
+            var _this2 = this;
 
             return React.createElement(
                 'div',
                 null,
-                React.createElement(
-                    'h1',
-                    null,
-                    'Hello World'
-                ),
-                React.createElement(
-                    'h2',
-                    null,
-                    'It is ',
-                    this.state.date.toLocaleTimeString()
-                ),
+                this.state.count,
                 React.createElement(
                     'button',
                     { onClick: function onClick() {
-                            _this4.addOne();
+                            _this2.add();
                         } },
-                    '\u70B9\u6211+1'
+                    '\u52A01'
                 )
             );
         }
     }]);
 
-    return Clock;
+    return Count;
 }(React.Component);
 
-ReactDOM.render(React.createElement(Clock, null), document.getElementById('app'));
+ReactDOM.render(React.createElement(Count, { num: 1 }), document.getElementById('app'));
